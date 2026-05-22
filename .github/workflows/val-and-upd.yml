@@ -1,0 +1,145 @@
+name: Validate MD and generate QA Report
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 10 4 * *"
+  workflow_dispatch:
+
+jobs:
+  detect_md_changes:
+    name: Detect modified metadata files
+    runs-on: ubuntu-24.04
+
+    outputs:
+      has_changes: ${{ steps.collect.outputs.has_changes }}
+      files: ${{ steps.collect.outputs.files }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Collect modified metadata files
+        id: collect
+        run: |
+          git diff --name-only HEAD^ HEAD -- '*.xml' > modified_files.txt
+
+          echo "Modified metadata files:"
+          cat modified_files.txt || true
+
+          if [[ ! -s modified_files.txt ]]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "files=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          cat modified_files.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  validate_files:
+    name: Validate SAML metadata
+    runs-on: ubuntu-24.04
+    needs: detect_md_changes
+    if: needs.detect_md_changes.outputs.has_changes == 'true'
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Install Java (JDK)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          echo "JAVA_HOME=$(dirname $(dirname $(readlink -f $(which javac))))" >> $GITHUB_ENV
+
+      - name: Validate XML files
+        run: |
+          echo "Using JAVA_HOME=$JAVA_HOME"
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            if [[ ! -f "$file" ]]; then
+              echo "Skipping missing file: $file"
+              continue
+            fi
+
+            echo "Validating: $file"
+            check-saml-metadata/xmlsectool/xmlsectool.sh \
+              --validateSchema \
+              --schemaDirectory check-saml-metadata/saml-schema \
+              --logConfig check-saml-metadata/logger.xml \
+              --inFile "$file"
+          done <<< "${{ needs.detect_md_changes.outputs.files }}"
+
+  deploy:
+    name: Update metadata QA report
+    runs-on: ubuntu-24.04
+    needs: validate_files
+    if: github.repository == 'clarin-eric/SPF-SPs-metadata'
+
+    steps:
+      - name: Checkout source (master)
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Checkout existing gh-pages branch
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: gh-pages
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils ant jq unzip wget
+
+      - name: Run compile script (update gh-pages contents)
+        env:
+          TARGET_BRANCH: gh-pages
+          SOURCE_BRANCH: master
+          SHA: ${{ github.sha }}
+        run: bash CI-assets/compile_qa_rep.sh
+
+      - name: Deploy to GitHub Pages (no third‑party actions)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          # Ensure build output exists
+          if [ ! -d "gh-pages" ]; then
+            echo "ERROR: Build output directory 'gh-pages' does not exist"
+            exit 1
+          fi
+
+          git config --global user.name "clarin-bot"
+          git config --global user.email "sysops@clarin.eu"
+
+          # Clone gh-pages branch into a separate directory
+          rm -rf repo-gh-pages
+          git clone --depth=1 --branch gh-pages \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            repo-gh-pages
+
+          # Clean the branch
+          cd repo-gh-pages
+          git rm -r . || true
+          cd ..
+
+          # Copy built site into the clone
+          cp -r gh-pages/* repo-gh-pages/
+
+          cd repo-gh-pages
+          git add -A
+          git commit -m "Deploy SAML QA report for: ${{ github.sha }}" || true
+          git push origin gh-pages

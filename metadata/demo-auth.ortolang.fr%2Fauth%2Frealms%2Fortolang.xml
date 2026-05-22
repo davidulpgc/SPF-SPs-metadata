@@ -13,6 +13,11 @@
     </md:Extensions>
     <md:SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol" AuthnRequestsSigned="true" WantAssertionsSigned="false">
         <md:Extensions>
+            <init:RequestInitiator Binding="urn:oasis:names:tc:SAML:profiles:SSO:request-init"
+                                Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/protocol/openid-connect/auth"/>
+            <idpdisc:DiscoveryResponse Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol"
+                                        Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/protocol/openid-connect/auth"
+                                        index="1"/>
             <mdui:UIInfo>
                 <mdui:DisplayName xml:lang="en">ORTOLANG</mdui:DisplayName>
                 <mdui:Description xml:lang="en">Platform of linguistic tools and resources for an optimized treatment of the French language</mdui:Description>
@@ -29,15 +34,15 @@
         </md:Extensions>
         <md:KeyDescriptor use="signing">
             <ds:KeyInfo>
-                <ds:KeyName>s4tX6epRcSun_w-_DPHLbemSqSWUzQZ2Z_RVPFa4VC4</ds:KeyName>
+                <ds:KeyName>ysgbCCQDg1oOrwcWpWw68U-YozQ5tYYLw0XLTbj7qo4</ds:KeyName>
                 <ds:X509Data>
-                    <ds:X509Certificate>MIICnzCCAYcCBgFRxPn3xzANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhvcnRvbGFuZzAeFw0xNTEyMjExNDM2MzRaFw0yNTEyMjExNDM4MTRaMBMxETAPBgNVBAMMCG9ydG9sYW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAj3hDFa3b77uDgalDKwLrvAlVSUxLwwL5pgl2d/0UDiaiRUjtqdrbhCQNEPA+ijDh2LzBDdC7FhabY3/gIj5hqI6zkWVWQoG98ONdn52jKCpQO5qjK1wcFnUqz4bfESxbc5vESfQ+MPzkqLC7gm8p5QrjJQgxXbyEEQxBCI0jWb+tUHsQAis3IzoNAsuXr5a9qm9wF+mP/VzB3WGCbJOP+7WwwngN3iN4Ykq96nqR1A/3c/CrtygeVtalYxEFzK9g1qk+q6/q5vyF1PSaThmbW4kgXktvXICDgFEr2/tC+JXQt6pH65tqjc2Inqw/N6QwOdjkmF8BHjFPyxudRMRPZwIDAQABMA0GCSqGSIb3DQEBCwUAA4IBAQABq2zafrSRBzyTpPEoYwPPxzobYfIavIoLbKhpJq+7dHWJMvU2PhJlmE3HnBi05wr2Xhf3LNQJ1N2Si3wHUAGK4tSxw+wXQOLvCuo/5mjRG0CTzyj0rrWZR0/5Ogn0+f1wheUOtC6U0X2woWfdsbgronX3CqGh2B73m5SbyD4Ul8EoxMlpnNmh9hd54HH2YNvKS2JrMhPaHSibVJyHuQND3CxlhpobozWzcng4J4QvMGxgrEBUDdYg8jY86lS4JZUUiuVoVTlV0yKSkbsUSgb/ZeBP+bUARUAnrAHptCxQRW0FVHxkCFj7wmPdQsIe2eNO8lvEQbABKsvG8xGQTboO</ds:X509Certificate>
+                    <ds:X509Certificate>MIIEnzCCAocCBgGb/swT9TANBgkqhkiG9w0BAQsFADATMREwDwYDVQQDDAhvcnRvbGFuZzAeFw0yNjAxMjcwOTMwNDVaFw0zNjAxMjcwOTMyMjVaMBMxETAPBgNVBAMMCG9ydG9sYW5nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzXIr0d78dZBnXMhFTmJz1olvlTKhksxY/tgfQbCT2bIYvETaI5Kmt4LaTx3ubp1BEkCKhWGy3j+ZBTupFLXvJ6jR8r/IwM5Z8BHgb8P99Uasf+87NxNCoTkjVHBC/CjAL9mlz3NFRN5wesyJ500zz7CUB3gnx+N7kuwQWquUKNWAURCxEb4q+FKk4DdfAdU5/ONxcYyqkxiUohXsevYIeDLcQXlLRpAd2XYghpyNoz1+uBBfGB23gm/0S7CTjPCoGz3I04WXvVulBi6oPgujPTW5ZsmnmSCLBN5Awy8kV8SZ/2Gw5TVCOkqSWxOqRgb0XjBYZKA6DqzgTKVm7p95qo914wktwl/eRvifQfdWLotgvRrY2UijDfuVkjUnauM0SLnH+M2HcAAQFMZAG6kFutq8DOs1gY7Tw1N0GHP/FLhTw2oWyY2A0xcYAHxGvtx7S99hc2z5c3iwdCXmFVbLbZ2091d52SeMDNRdBa4ndv7CT0XwpHkb2QfTnaFUUOIyJZqwzt3LtB4DlWzqeriwgRMCx2iDPBj/mY6bfCEjbyVQJhizo9PCS2zp+sQnDTVjysM+cj5O3xVX4KahZ/z4CEECpVhQ2gOahCXaXnU5HqK9P0I4boS2znv4rJUfC4Dnp6qTXzP/2Vg2DA6SttzquEqyN0343PtoGI1KeMvUnp0CAwEAATANBgkqhkiG9w0BAQsFAAOCAgEAOYody8pH+VGQcEx0ROLS4TXgcclI3WS+QBFVeV33rND6yhcygodiUNV14KU9zhgT29/dD9kr5uXQyvbeZtXOMET2RjYTYiBH/oZ/Bfo+K8LphEaOqahJJGXqMB598hl3Tt/75IkYReWdYnPOdH9thbWzcM3P95eGgXanG0layXaDWJumJgpkAGWystrdVQi3J5EUEDOf6cyyGObNkmROh3NtNckp/boPE2206Sefl3C9SabWoDE7ov04Au9sZ/Hr0DUUDDshfcTyrW/auP7rMvKoKLaKEPxgPWktfdRX+psctwLujQBMjhf8CHvLVjwBTIl1ZM0daIpra210Tz+mgeUrTLpW1wes8yT4hk0ffxFxOyqQdUu8T3a72wAtF5JaTcJLKNBVcFiU4qZtyfEggwCHIPthtu6MLgQL7p70Q250F7dO8KDlgBnuBM22CVkItyNn/pc2mPI3GSpi/InpgzDwbLg/2Da1tO0auqbyxPHVbpvjTtI21HjjtWCIz7vAVLRrLHG+V6nrv4CZylDGjtT8liyeYHgA0MJ2azwjuHLnjXwEFXV5rfqcU5OFTp0fUVKhjQVdwFrOH5Qn1Y09nOp/o2djqGxxxdk/4PwJyYxZAHxByCo1EYSFich9wQ1XTM+qv27VRABm+3e7KC4QVf/fYQybo96AoslqUUe4zb0=</ds:X509Certificate>
                 </ds:X509Data>
             </ds:KeyInfo>
         </md:KeyDescriptor>
-        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/broker/clarin/endpoint"/>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/broker/fed-shib-saml/endpoint"/>
         <md:NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</md:NameIDFormat>
-        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/broker/clarin/endpoint" isDefault="true" index="1"/>
+        <md:AssertionConsumerService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://demo-auth.ortolang.fr/auth/realms/ortolang/broker/fed-shib-saml/endpoint" isDefault="true" index="1"/>
         <md:AttributeConsumingService index="1">
             <md:ServiceName xml:lang="en">ORTOLANG</md:ServiceName>
             <md:ServiceName xml:lang="fr">ORTOLANG</md:ServiceName>

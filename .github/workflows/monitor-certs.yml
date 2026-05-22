@@ -1,0 +1,36 @@
+name: Monitor SP certificates
+
+on:
+  schedule:
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+
+jobs:
+  monitor_certs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install msmtp and xmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y msmtp libxml2-utils
+
+      - name: Configure msmtp
+        run: |
+          cat <<-EOF > ~/.msmtprc
+          account default
+          host "${{ secrets.SMTP_HOST }}"
+          port "${{ secrets.SMTP_PORT }}"
+          auth on
+          user "${{ secrets.SMTP_USER }}"
+          password "${{ secrets.SMTP_PASS }}"
+          from "${{ secrets.SMTP_USER }}"
+          tls on
+          tls_starttls off
+          logfile ~/.msmtp.log
+          EOF
+          chmod 600 ~/.msmtprc
+
+      - name: Run certificates monitor script
+        run: bash CI-assets/cert_monitor.sh
